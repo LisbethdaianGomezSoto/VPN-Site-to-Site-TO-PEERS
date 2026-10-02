@@ -39,9 +39,8 @@
 6. [Flujo del tráfico](#-flujo-del-tráfico)
 7. [Configuración](#️-configuración)
 8. [Pruebas y evidencias](#-pruebas-y-evidencias)
-9. [Problemas encontrados y soluciones](#-problemas-encontrados-y-soluciones)
-10. [Consideraciones de seguridad](#-consideraciones-de-seguridad)
-11. [Estructura del repositorio](#-estructura-del-repositorio)
+9. [Consideraciones de seguridad](#-consideraciones-de-seguridad)
+10. [Estructura del repositorio](#-estructura-del-repositorio)
 
 ---
 
