@@ -1,0 +1,25 @@
+# ============================================================
+#  FortiGate (FortiG-ESTE) - Configuración inicial por consola
+#  Solo asigna las IPs de las interfaces y el acceso administrativo
+#  para poder abrir el GUI desde PC-ADMIN (https://10.7.1.17).
+#  TODO lo demás (rutas, objetos, VPN y políticas) se configuró por GUI:
+#  ver docs/03-configuracion-fortigate-gui.md
+# ============================================================
+config system interface
+ edit port4
+  set mode static
+  set ip 10.7.1.17 255.255.255.240
+  set allowaccess ping https ssh http
+  set status up
+ next
+ edit port2
+  set mode static
+  set ip 10.7.1.1 255.255.255.240
+  set allowaccess ping
+ next
+ edit port1
+  set mode static
+  set ip 200.7.1.2 255.255.255.252
+  set allowaccess ping
+ next
+end

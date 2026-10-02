@@ -1,0 +1,147 @@
+#config-version=FGVMK6-7.0.9-FW-build0444-221121:opmode=0:vdom=0:user=admin
+# ============================================================
+#  Running-config del FortiGate (FortiG-ESTE) · FortiOS 7.0.9
+#  EXTRACTO con las secciones del laboratorio. La configuración
+#  completa (~20 000 líneas de valores por defecto) no se publica
+#  porque incluye hashes de contraseña y claves privadas de
+#  certificados. Se omiten los uuid. psksecret oculta.
+# ============================================================
+config system global
+    set alias "FortiGate-VM64-KVM"
+    set hostname "FortiGate-VM64-KVM"
+    set timezone 04
+end
+config system interface
+    edit "port1"
+        set vdom "root"
+        set ip 200.7.1.2 255.255.255.252
+        set allowaccess ping
+        set type physical
+        set snmp-index 1
+    next
+    edit "port2"
+        set vdom "root"
+        set ip 10.7.1.1 255.255.255.240
+        set allowaccess ping
+        set type physical
+        set snmp-index 2
+    next
+    edit "port4"
+        set vdom "root"
+        set ip 10.7.1.17 255.255.255.240
+        set allowaccess ping https ssh http
+        set type physical
+        set snmp-index 4
+    next
+    edit "VPN-R1"
+        set vdom "root"
+        set type tunnel
+        set snmp-index 15
+        set interface "port1"
+    next
+end
+config firewall address
+    edit "SRV_NET"
+        set subnet 10.7.1.0 255.255.255.240
+    next
+    edit "USERS_NET"
+        set subnet 10.7.1.128 255.255.255.128
+    next
+end
+config vpn ipsec phase1-interface
+    edit "VPN-R1"
+        set interface "port1"
+        set peertype any
+        set net-device disable
+        set proposal des-sha1
+        set dhgrp 2
+        set nattraversal disable
+        set remote-gw 200.7.1.6
+        set psksecret ENC <OCULTO>
+    next
+end
+config vpn ipsec phase2-interface
+    edit "VPN-R1-P2"
+        set phase1name "VPN-R1"
+        set proposal des-sha1
+        set dhgrp 2
+        set auto-negotiate enable
+        set keylifeseconds 3600
+        set src-subnet 10.7.1.0 255.255.255.240
+        set dst-subnet 10.7.1.128 255.255.255.128
+    next
+end
+config firewall policy
+    edit 1
+        set name "SRV-to-USERS-VPN"
+        set srcintf "port2"
+        set dstintf "VPN-R1"
+        set action accept
+        set srcaddr "SRV_NET"
+        set dstaddr "USERS_NET"
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+    next
+    edit 2
+        set name "USERS-to-SRV-VPN"
+        set srcintf "VPN-R1"
+        set dstintf "port2"
+        set action accept
+        set srcaddr "USERS_NET"
+        set dstaddr "SRV_NET"
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+    next
+    edit 3
+        set name "ADMIN-to-WAN"
+        set srcintf "port4"
+        set dstintf "port1"
+        set action accept
+        set srcaddr "all"
+        set dstaddr "all"
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+        set nat enable
+    next
+    edit 4
+        set name "SRV-to-WAN"
+        set srcintf "port2"
+        set dstintf "port1"
+        set action accept
+        set srcaddr "all"
+        set dstaddr "all"
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+        set nat enable
+    next
+    edit 5
+        set name "ADMIN-to-SRV"
+        set srcintf "port4"
+        set dstintf "port2"
+        set action accept
+        set srcaddr "all"
+        set dstaddr "SRV_NET"
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+    next
+end
+config router static
+    edit 1
+        set gateway 200.7.1.1
+        set device "port1"
+    next
+    edit 2
+        set dst 10.7.1.128 255.255.255.128
+        set device "VPN-R1"
+    next
+    edit 3
+        set dst 10.7.1.128 255.255.255.128
+        set distance 254
+        set blackhole enable
+    next
+end

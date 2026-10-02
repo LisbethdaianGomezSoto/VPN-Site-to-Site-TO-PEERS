@@ -1,0 +1,41 @@
+# ============================================================
+#  Comandos de verificación y demostración
+# ============================================================
+
+# --- ISP ---
+show ip interface brief
+show cdp neighbors
+show arp
+ping 200.7.1.2
+ping 200.7.1.6
+
+# --- SW-2 ---
+show vlan brief
+show interfaces trunk
+
+# --- R-1 ---
+show ip interface brief
+show ip dhcp pool
+show ip dhcp binding
+show crypto map
+show crypto isakmp policy
+show crypto isakmp sa            ! estado esperado: QM_IDLE
+show crypto ipsec sa             ! encaps / decaps subiendo juntos
+show crypto ipsec sa | include pkts
+clear crypto sa counters         ! contadores limpios para la demo
+ping 10.7.1.2 source 10.7.1.129 repeat 20
+
+# --- PC1 (VPCS) ---
+ip dhcp
+ping 10.7.1.2
+trace 10.7.1.2
+
+# --- FortiGate (GUI) ---
+# Dashboard > Network > IPsec       -> túnel VPN-R1 en verde
+# Monitor  > IPsec Monitor          -> Bring Up / Bring Down
+# Log & Report > Forward Traffic    -> sesiones por VPN-R1
+# Log & Report > VPN Events         -> negociación fase 1 / fase 2
+
+# --- Prueba negativa: sin VPN no hay comunicación ---
+# FortiGate > Firewall Policy: Disable en SRV-to-USERS-VPN y USERS-to-SRV-VPN
+#   (o shutdown en ISP f0/1). Repetir en PC1: ping y trace 10.7.1.2 -> fallan.

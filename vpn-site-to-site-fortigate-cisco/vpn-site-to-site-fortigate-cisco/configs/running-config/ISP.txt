@@ -1,0 +1,67 @@
+! ============================================================
+!  show running-config · ISP  (Cisco 2691 · IOS 12.4)
+!  Hashes de contraseñas ocultos.
+! ============================================================
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname ISP
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 <HASH-OCULTO>
+!
+no aaa new-model
+memory-size iomem 5
+no ip icmp rate-limit unreachable
+ip cef
+!
+ip auth-proxy max-nodata-conns 3
+ip admission max-nodata-conns 3
+!
+no ip domain lookup
+ip domain name red.local
+!
+username Admin privilege 15 secret 5 <HASH-OCULTO>
+!
+ip tcp synwait-time 5
+ip ssh version 2
+!
+interface FastEthernet0/0
+ ip address 200.7.1.1 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ ip address 200.7.1.5 255.255.255.252
+ duplex auto
+ speed auto
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+no cdp log mismatch duplex
+!
+control-plane
+!
+banner motd ^CLisbeth Gómez 2025-0701^C
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ login local
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ login local
+ transport input ssh
+!
+end

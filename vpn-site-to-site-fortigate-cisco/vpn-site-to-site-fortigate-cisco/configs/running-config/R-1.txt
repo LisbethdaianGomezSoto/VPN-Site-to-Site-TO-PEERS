@@ -1,0 +1,105 @@
+! ============================================================
+!  show running-config · R-1  (Cisco 2691 · IOS 12.4)
+!  Hashes de contraseñas ocultos.
+!
+!  Nota: en "crypto isakmp policy 10" no aparecen "encryption des" ni
+!  "hash sha" porque son los valores por defecto de IOS y el router no
+!  los muestra en la configuración.
+! ============================================================
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R-1
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 <HASH-OCULTO>
+!
+no aaa new-model
+memory-size iomem 5
+no ip icmp rate-limit unreachable
+ip cef
+!
+ip auth-proxy max-nodata-conns 3
+ip admission max-nodata-conns 3
+no ip dhcp use vrf connected
+ip dhcp excluded-address 10.7.1.129 10.7.1.135
+!
+ip dhcp pool VLAN10
+   network 10.7.1.128 255.255.255.128
+   default-router 10.7.1.129
+   dns-server 8.8.8.8
+!
+no ip domain lookup
+ip domain name red.local
+!
+username Admin privilege 15 secret 5 <HASH-OCULTO>
+!
+ip tcp synwait-time 5
+ip ssh version 2
+!
+crypto isakmp policy 10
+ authentication pre-share
+ group 2
+crypto isakmp key VPN2025-0701 address 200.7.1.2
+!
+crypto ipsec transform-set TS esp-des esp-sha-hmac
+!
+crypto map CMAP 10 ipsec-isakmp
+ set peer 200.7.1.2
+ set transform-set TS
+ set pfs group2
+ match address 101
+!
+interface FastEthernet0/0
+ ip address 200.7.1.6 255.255.255.252
+ ip nat outside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+ crypto map CMAP
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1.10
+ encapsulation dot1Q 10
+ ip address 10.7.1.129 255.255.255.128
+ ip nat inside
+ ip virtual-reassembly
+!
+ip forward-protocol nd
+ip route 0.0.0.0 0.0.0.0 200.7.1.5
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 100 interface FastEthernet0/0 overload
+!
+access-list 100 deny   ip 10.7.1.128 0.0.0.127 10.7.1.0 0.0.0.15
+access-list 100 permit ip 10.7.1.128 0.0.0.127 any
+access-list 101 permit ip 10.7.1.128 0.0.0.127 10.7.1.0 0.0.0.15
+no cdp log mismatch duplex
+!
+control-plane
+!
+banner motd ^CLisbeth Gómez 2025-0701^C
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ login local
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ login local
+ transport input ssh
+!
+end

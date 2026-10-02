@@ -1,0 +1,38 @@
+! ============================================================
+!  ISP (Cisco 2691 · IOS 12.4) - Proveedor con IPs públicas
+!  Nota: <CONTRASEÑA> sustituye la clave real del laboratorio.
+! ============================================================
+
+! ---------- Configuración base ----------
+enable
+configure terminal
+no ip domain-lookup
+hostname ISP
+banner motd #Lisbeth Gómez 2025-0701#
+username Admin privilege 15 secret <CONTRASEÑA>
+enable secret <CONTRASEÑA>
+line console 0
+login local
+exit
+ip domain-name red.local
+crypto key generate rsa
+2048
+ip ssh version 2
+line vty 0 4
+login local
+transport input ssh
+exit
+end
+write memory
+
+! ---------- Interfaces hacia los peers ----------
+en
+config t
+interface f0/0
+ip address 200.7.1.1 255.255.255.252
+no shutdown
+interface f0/1
+ip address 200.7.1.5 255.255.255.252
+no shutdown
+end
+write memory

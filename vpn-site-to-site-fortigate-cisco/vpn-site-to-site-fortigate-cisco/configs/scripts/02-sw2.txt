@@ -1,0 +1,39 @@
+! ============================================================
+!  SW-2 (Cisco IOSv L2 · IOS 15.2) - Switch de usuarios
+!  Nota: <CONTRASEÑA> sustituye la clave real del laboratorio.
+! ============================================================
+
+! ---------- Configuración base ----------
+enable
+configure terminal
+no ip domain-lookup
+hostname SW-2
+banner motd #Lisbeth Gómez 2025-0701#
+username Admin privilege 15 secret <CONTRASEÑA>
+enable secret <CONTRASEÑA>
+line console 0
+login local
+exit
+ip domain-name red.local
+crypto key generate rsa
+2048
+ip ssh version 2
+line vty 0 4
+login local
+transport input ssh
+exit
+end
+write memory
+
+! ---------- VLAN 10 y puertos ----------
+en
+config t
+vlan 10
+interface Gi0/0
+switchport trunk encapsulation dot1q
+switchport mode trunk
+interface Gi0/1
+switchport mode access
+switchport access vlan 10
+end
+write memory

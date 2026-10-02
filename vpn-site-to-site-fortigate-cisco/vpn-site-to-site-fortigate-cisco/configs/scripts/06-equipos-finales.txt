@@ -1,0 +1,16 @@
+# ============================================================
+#  Equipos finales
+# ============================================================
+
+# --- PC1 (VPCS) - usuarios VLAN 10, por DHCP ---
+ip dhcp
+show ip
+# Resultado: IP 10.7.1.136/25  GW 10.7.1.129
+
+# --- PC-ADMIN (Windows) - IP estática hacia FortiGate Port4 ---
+#   IP:        10.7.1.18
+#   Máscara:   255.255.255.240   (/28)
+#   Gateway:   10.7.1.17
+#   DNS:       8.8.8.8
+# Equivalente por línea de comandos:
+netsh interface ip set address name="Ethernet" static 10.7.1.18 255.255.255.240 10.7.1.17

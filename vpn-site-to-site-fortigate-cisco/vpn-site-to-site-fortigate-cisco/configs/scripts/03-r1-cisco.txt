@@ -1,0 +1,80 @@
+! ============================================================
+!  R-1 (Cisco 2691 · IOS 12.4) - Red, DHCP, NAT y VPN IPsec
+!  Peer: FortiGate 200.7.1.2
+!  Nota: <CONTRASEÑA> sustituye la clave real del laboratorio.
+! ============================================================
+
+! ---------- Configuración base ----------
+enable
+configure terminal
+no ip domain-lookup
+hostname R-1
+banner motd #Lisbeth Gómez 2025-0701#
+username Admin privilege 15 secret <CONTRASEÑA>
+enable secret <CONTRASEÑA>
+line console 0
+login local
+exit
+ip domain-name red.local
+crypto key generate rsa
+2048
+ip ssh version 2
+line vty 0 4
+login local
+transport input ssh
+exit
+end
+write memory
+
+! ---------- Interfaces ----------
+config t
+interface f0/0
+ ip address 200.7.1.6 255.255.255.252
+ ip nat outside
+ no shutdown
+interface f0/1
+ no shutdown
+interface f0/1.10
+ encapsulation dot1Q 10
+ ip address 10.7.1.129 255.255.255.128
+ ip nat inside
+
+! ---------- Ruta por defecto ----------
+ip route 0.0.0.0 0.0.0.0 200.7.1.5
+
+! ---------- DHCP VLAN 10 ----------
+ip dhcp excluded-address 10.7.1.129 10.7.1.135
+ip dhcp pool VLAN10
+ network 10.7.1.128 255.255.255.128
+ default-router 10.7.1.129
+ dns-server 8.8.8.8
+
+! ---------- NAT: excluir el tráfico de la VPN ----------
+access-list 100 deny   ip 10.7.1.128 0.0.0.127 10.7.1.0 0.0.0.15
+access-list 100 permit ip 10.7.1.128 0.0.0.127 any
+ip nat inside source list 100 interface f0/0 overload
+
+! ---------- VPN IPsec con DES ----------
+crypto isakmp policy 10
+ encryption des
+ hash sha
+ authentication pre-share
+ group 2
+ lifetime 86400
+crypto isakmp key VPN2025-0701 address 200.7.1.2
+
+crypto ipsec transform-set TS esp-des esp-sha-hmac
+ mode tunnel
+
+access-list 101 permit ip 10.7.1.128 0.0.0.127 10.7.1.0 0.0.0.15
+
+crypto map CMAP 10 ipsec-isakmp
+ set peer 200.7.1.2
+ set transform-set TS
+ set pfs group2
+ match address 101
+
+interface f0/0
+ crypto map CMAP
+end
+write memory

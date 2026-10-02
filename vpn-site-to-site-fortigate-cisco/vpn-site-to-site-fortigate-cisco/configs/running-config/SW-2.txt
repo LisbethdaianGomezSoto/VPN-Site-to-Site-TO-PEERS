@@ -1,0 +1,62 @@
+! ============================================================
+!  show running-config · SW-2  (Cisco IOSv L2 · IOS 15.2)
+!  Hashes ocultos. Se omiten los banners de licencia de IOSv y las
+!  interfaces Gi0/2 a Gi3/3, que solo tienen "negotiation auto".
+! ============================================================
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+service compress-config
+!
+hostname SW-2
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 <HASH-OCULTO>
+!
+username Admin privilege 15 secret 5 <HASH-OCULTO>
+no aaa new-model
+!
+no ip domain-lookup
+ip domain-name red.local
+ip cef
+no ipv6 cef
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+interface GigabitEthernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ negotiation auto
+!
+interface GigabitEthernet0/1
+ switchport access vlan 10
+ switchport mode access
+ negotiation auto
+!
+! (Gi0/2 a Gi3/3: negotiation auto, sin más configuración)
+!
+ip forward-protocol nd
+!
+ip http server
+ip http secure-server
+!
+ip ssh version 2
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+control-plane
+!
+banner motd ^CLisbeth Gómez 2025-0701^C
+!
+line con 0
+ login local
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+end
