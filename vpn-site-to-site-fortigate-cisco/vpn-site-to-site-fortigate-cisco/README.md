@@ -18,10 +18,12 @@
 ## 🎥 Video demostrativo
 
 <div align="center">
+  <a href="https://youtu.be/bHQzuacoOBU">
+    <img src="images/topologia/topologia-gns3.png" alt="Ver video" width="700">
+  </a>
+</div>
 
-[![Ver el video demostrativo](images/topologia/topologia-gns3.png)](https://REEMPLAZAR-CON-EL-ENLACE-DEL-VIDEO)
-
-**▶️ Haz clic en la imagen para ver la demostración completa del laboratorio.**
+**▶️ Haz clic en la imagen para ver el video del laboratorio.**
 
 </div>
 
