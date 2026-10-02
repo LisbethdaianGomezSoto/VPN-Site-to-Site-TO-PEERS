@@ -2,9 +2,9 @@
 
 [⬅️ Volver al README](../README.md)
 
-Todos los scripts están en [`configs/scripts/`](../configs/scripts/) y las configuraciones finales en [`configs/running-config/`](../configs/running-config/). Ejecuta `write memory` en cada equipo para no perder la configuración al reiniciar el nodo en GNS3.
+Todos los scripts están en [`configs/scripts/`](../configs/scripts/) y las configuraciones finales en [`configs/running-config/`](../configs/running-config/). 
 
-Cada script empieza con la **configuración base** (nombre, usuario, SSH y llaves RSA) y continúa con la parte del laboratorio. `<CONTRASEÑA>` sustituye la clave real.
+Cada script empieza con la **configuración base** (nombre, usuario, SSH y llaves RSA) y continúa con la parte del laboratorio. `<CONTRASEÑA>` 
 
 ## 1. ISP
 
