@@ -291,20 +291,6 @@ R-1# show crypto ipsec sa | include pkts
 
 ---
 
-## 🛠️ Problemas encontrados y soluciones
-
-| Problema | Causa | Solución |
-|---|---|---|
-| El ISP no alcanzaba a ningún peer | Interfaces sin IP y en `shutdown`; cables conectados al puerto contrario | Configurar el ISP y corregir el cableado verificado con `show cdp neighbors` |
-| PC1 no recibía DHCP | El SW-2 había perdido la VLAN 10 y el trunk | Reconfigurar VLAN y trunk y ejecutar `write memory` |
-| El túnel subía pero el ping fallaba (`encaps` sin `decaps`) | El servidor tenía una IP de otra red (`10.7.1.130/28`) | Corregir a `10.7.1.2/28` con gateway `10.7.1.1` |
-| Aviso de *duplex mismatch* en CDP | Autonegociación emulada en GNS3 | Dejar `duplex auto`; es cosmético |
-| Una sola interfaz de entrada por política en el FortiGate | Limitación de esa versión del GUI | Una política por interfaz (`port2` y `port4`) |
-
-Detalle completo en [docs/05-problemas-y-soluciones.md](docs/05-problemas-y-soluciones.md).
-
----
-
 ## 🔒 Consideraciones de seguridad
 
 - **DES** se usó porque el FortiGate del laboratorio no ofrecía AES. DES es un cifrado débil y obsoleto; en producción se usaría **AES-256 con SHA-256 y DH 14 o superior**.
